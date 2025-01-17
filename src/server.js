@@ -4,15 +4,21 @@ import pinoHttp from 'pino-http';
 
 export const setupServer = () => {
   const app = express();
-
+  const PORT = 3000;
   app.use(cors());
 
   const logger = pinoHttp();
   app.use(logger);
 
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Route not found' });
+  app.get('/', (req, res) => {
+    res.send('Hello, World!');
   });
-
-  return app;
+  app.use((req, res) => {
+    res.status(404).json({
+      message: 'Not found',
+    });
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  });
 };
