@@ -4,6 +4,7 @@ import pino from 'pino-http';
 
 import dotenv from 'dotenv';
 import { getEnvVar } from '../utils/getEnvVar.js';
+import { getAllStudents, getStudentById } from '../db/models/contacts.js';
 
 dotenv.config();
 const PORT = Number(getEnvVar('PORT', '3000'));
@@ -23,7 +24,21 @@ export const setupServer = () => {
   );
 
   app.get('/', (req, res) => {
-    res.send('Hello, World!');
+    res.json({ message: 'Hello, World!' });
+  });
+  app.get('/contacts', (res, req, next) => {
+    res.status(200).json({
+      message: 'Successfully found contacts!',
+      data: getAllStudents(),
+    });
+    next();
+  });
+  app.get('/contacts/contactId', (res, req, next) => {
+    res.status(200).json({
+      message: 'Successfully found contact with id {contactId}!',
+      data: getStudentById(),
+    });
+    next();
   });
   app.use('*', (req, res, next) => {
     res.status(404).json({

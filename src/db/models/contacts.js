@@ -31,3 +31,13 @@ const contactsSchema = new Schema(
   },
 );
 export const ContactsCollection = model('contacts', contactsSchema);
+
+export const getAllStudents = async () => {
+  const contacts = await ContactsCollection.find();
+  return contacts;
+};
+export const getStudentById = async (contactId) => {
+  const contact = await ContactsCollection.findById(contactId);
+  console.log(contact);
+  return contact;
+};
