@@ -1,5 +1,5 @@
 import { mongoose } from 'mongoose';
-import { getEnvVar } from '../utils/getEnvVar';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const initMongoConnection = async () => {
   try {
@@ -9,7 +9,7 @@ export const initMongoConnection = async () => {
     const db = getEnvVar('MONGODB_DB');
 
     await mongoose.connect(
-      `mongodb+srv://${user}:${pwd}@${url}/${db}/?retryWrites=true&w=majority`,
+      `mongodb+srv://${user}:${pwd}@${url}/${db}?retryWrites=true&w=majority`,
     );
     console.log('Mongo connection successfully established!');
   } catch (e) {
@@ -17,24 +17,3 @@ export const initMongoConnection = async () => {
     throw e;
   }
 };
-// mongodb+srv://svalexandrovna007:<db_password>@cluster0.j3zdw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-
-// const client = new MongoClient(uri, {
-//   serverApi: {
-//     version: ServerApiVersion.v1,
-//     strict: true,
-//     deprecationErrors: true,
-//   },
-// });
-
-// export const initMongoConnection = async () => {
-//   try {
-//     await client.connect();
-
-//     await client.db('admin').command({ ping: 1 });
-//     console.log('Mongo connection successfully established!');
-//   } finally {
-//     await client.close();
-//   }
-// };
-// initMongoConnection().catch(console.dir);
