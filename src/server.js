@@ -3,8 +3,9 @@ import cors from 'cors';
 import pino from 'pino-http';
 
 import dotenv from 'dotenv';
-import { getEnvVar } from '../utils/getEnvVar.js';
-import { getAllStudents, getStudentById } from '../db/models/contacts.js';
+
+import { getEnvVar } from './utils/getEnvVar.js';
+import { getAllStudents, getStudentById } from './services/contacts.js';
 
 dotenv.config();
 const PORT = Number(getEnvVar('PORT', '3000'));
