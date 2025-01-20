@@ -27,15 +27,15 @@ export const setupServer = () => {
   app.get('/', (req, res) => {
     res.json({ message: 'Hello, World!' });
   });
-  app.get('/contacts', async (req, res, next) => {
+  app.get('/contacts', async (req, res, _next) => {
     const getContacts = await getAllStudents();
-    res.status(200).json({
+    res.json({
+      status: 200,
       message: 'Successfully found contacts!',
       data: getContacts,
     });
-    next();
   });
-  app.get('/contacts/:contactId', async (req, res, next) => {
+  app.get('/contacts/:contactId', async (req, res, _next) => {
     const { contactId } = req.params;
 
     const getContactId = await getStudentById(contactId);
@@ -45,12 +45,12 @@ export const setupServer = () => {
       });
       return;
     }
-    res.status(200).json({
+    res.json({
+      status: 200,
       message: `Successfully found contact with id ${contactId}!`,
-      data: getContactId,
-    });
-    next();
-  });
+            data: getContactId,
+          });
+   
   app.use('*', (req, res, next) => {
     res.status(404).json({
       message: 'Not found',
