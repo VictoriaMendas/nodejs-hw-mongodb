@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { getAllContacts, getContactById } from '../services/contacts';
+import { getAllContacts, getContactById } from '../services/contacts.js';
 import {
   getContactByIdController,
   getContactsController,
-} from '../contrallers/contacts';
+} from '../contrallers/contacts.js';
+import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const router = Router();
 
@@ -32,6 +33,6 @@ router.get('/contacts/:contactId', async (req, res, _next) => {
   });
 });
 
-router.get('/contacts', getContactsController);
-router.get('contacts/contactById', getContactByIdController);
+router.get('/contacts', ctrlWrapper(getContactsController));
+router.get('contacts/contactById', ctrlWrapper(getContactByIdController));
 export default router;
