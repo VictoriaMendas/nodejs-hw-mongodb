@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getAllContacts, getContactById } from '../services/contacts.js';
 import {
+  createContactController,
   getContactByIdController,
   getContactsController,
 } from '../contrallers/contacts.js';
@@ -35,4 +36,5 @@ router.get('/contacts/:contactId', async (req, res, _next) => {
 
 router.get('/contacts', ctrlWrapper(getContactsController));
 router.get('contacts/contactById', ctrlWrapper(getContactByIdController));
+router.post('contacts', createContactController);
 export default router;
