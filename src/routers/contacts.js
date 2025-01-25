@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { getAllContacts, getContactById } from '../services/contacts.js';
 import {
   createContactController,
+  deleteContactController,
   getContactByIdController,
   getContactsController,
 } from '../contrallers/contacts.js';
@@ -36,5 +37,6 @@ router.get('/contacts/:contactId', async (req, res, _next) => {
 
 router.get('/contacts', ctrlWrapper(getContactsController));
 router.get('contacts/contactById', ctrlWrapper(getContactByIdController));
-router.post('contacts', createContactController);
+router.post('contacts', ctrlWrapper(createContactController));
+router.delete('/contacts/:contactById', ctrlWrapper(deleteContactController));
 export default router;
