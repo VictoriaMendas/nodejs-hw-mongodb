@@ -13,25 +13,37 @@ export const createContact = async (payload) => {
   const contact = await ContactsCollection.create(payload);
   return contact;
 };
-
-export const updateContactById = async (contactId, payload, options = {}) => {
-  const result = await ContactsCollection.findByIdAndUpdate(
+export const updateContactById = async (contactId, payload) => {
+  const result = await ContactsCollection.findOneAndUpdate(
     { _id: contactId },
     payload,
     {
       new: true,
-      includeResultMetadata: true,
-      ...options,
     },
   );
-  if (result || !result.value) return null;
-  return {
-    contact: result.value,
-  };
+
+  return result;
 };
 export const deleteContactById = async (contactId) => {
-  const contact = await ContactsCollection.findByIdAndDelete({
+  const contact = await ContactsCollection.findOneAndDelete({
     _id: contactId,
   });
   return contact;
 };
+// export const updateContactById = async (contactId, payload, options = {}) => {
+//   console.log(contactId);
+//   const result = await ContactsCollection.findOneAndUpdate(
+//     { _id: contactId },
+//     payload,
+//     {
+//       new: true,
+//       includeResultMetadata: true,
+//       ...options,
+//     },
+//   );
+//   console.log('result', result);
+//   if (!result || !result.value) return null;
+//   return {
+//     contact: result.value,
+//   };
+// };
