@@ -1,4 +1,4 @@
-import { THIRTY_DAY } from '../constants/index.js';
+import { THIRTY_DAYS } from '../constants/index.js';
 import { loginUser, registerUser } from '../services/auth.js';
 import { refreshUsersSession } from '../services/auth.js';
 import { logoutUser } from '../services/auth.js';
@@ -17,11 +17,11 @@ export const loginUserController = async (req, res) => {
 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAY),
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAY),
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
 
   res.json({
@@ -34,11 +34,11 @@ export const loginUserController = async (req, res) => {
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAY),
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
   res.cookie('sessionId', session._id, {
     httpOnly: true,
-    expires: new Date(Date.now() + THIRTY_DAY),
+    expires: new Date(Date.now() + THIRTY_DAYS),
   });
 };
 
