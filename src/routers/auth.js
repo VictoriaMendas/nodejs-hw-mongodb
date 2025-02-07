@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
-import { logoutUserController } from '../controllers/auth.js';
+import { logoutUserController } from '../contrallers/auth.js';
 
-import { refreshUserSessionController } from '../controllers/auth.js';
+import { refreshUserSessionController } from '../contrallers/auth.js';
 import {
   loginUserController,
   registerUserController,
