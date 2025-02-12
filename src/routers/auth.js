@@ -3,6 +3,8 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
 import { logoutUserController } from '../contrallers/auth.js';
 
+import { requestResetEmailSchema } from '../validation/auth.js';
+import { requestResetEmailController } from '../contrallers/auth.js';
 import { refreshUserSessionController } from '../contrallers/auth.js';
 import {
   loginUserController,
@@ -26,5 +28,11 @@ router.post(
 router.post('/refresh', ctrlWrapper(refreshUserSessionController));
 
 router.post('/logout', ctrlWrapper(logoutUserController));
+
+router.post(
+  '/send-reset-email',
+  validateBody(requestResetEmailSchema),
+  ctrlWrapper(requestResetEmailController),
+);
 
 export default router;
