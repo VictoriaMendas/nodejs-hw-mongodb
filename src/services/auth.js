@@ -19,6 +19,7 @@ import jwt from 'jsonwebtoken';
 import { SMTP } from '../constants/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendEmail } from '../utils/sendMail.js';
+import { validateBody } from '../middlewares/validateBody.js';
 
 export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
@@ -106,7 +107,7 @@ export const requestResetToken = async (email) => {
       sub: user._id,
       email,
     },
-    getEnvVar('VOQjLdrpG1TWCHhDzv3o'),
+    getEnvVar('JWT_SECRET'),
     {
       expiresIn: '5m',
     },
@@ -125,9 +126,7 @@ export const requestResetToken = async (email) => {
   const template = handlebars.compile(templateSource);
   const html = template({
     name: user.name,
-    link: `${getEnvVar(
-      'http://localhost:3000',
-    )}/reset-password?token=${resetToken}`,
+    link: `${getEnvVar('APP_DOMAIN')}/reset-password?token=${resetToken}`,
   });
 
   await sendEmail({
@@ -135,5 +134,45 @@ export const requestResetToken = async (email) => {
     to: email,
     subject: 'Reset your password',
     html,
+  });
+  if (!sendEmail) {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { error } = validateBody(req.body);
+  if (error) {
+    throw createHttpError(400, error.details[0].message);
+  }
+
+  const { token, newPassword } = req.body;
+
+  const entries = jwt.verify(token, getEnvVar('JWT_SECRET'));
+  if (!entries) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await UsersCollection.findOne({
+    email: entries.email,
+  });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const encryptedPassword = await bcrypt.hash(newPassword, 10);
+
+  await UsersCollection.updateOne(
+    { _id: user._id },
+    { password: encryptedPassword },
+  );
+
+  res.status(200).json({
+    status: 200,
+    message: 'Password successfully updated!',
   });
 };
