@@ -17,6 +17,8 @@ export const setupServer = () => {
   const app = express();
   app.use(express.json());
 
+  dotenv.config();
+
   app.use(cors());
   app.use(cookieParser());
   app.use(router);
