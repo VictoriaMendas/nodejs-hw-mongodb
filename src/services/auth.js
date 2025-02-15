@@ -143,15 +143,17 @@ export const requestResetToken = async (email) => {
   }
 };
 
-export const resetPassword = async (req, res) => {
-  const { error } = validateBody(req.body);
+export const resetPassword = async (payload) => {
+  const { error } = validateBody(payload);
+
   if (error) {
     throw createHttpError(400, error.details[0].message);
   }
 
-  const { token, newPassword } = req.body;
+  const { token, password: newPassword } = payload;
 
   const entries = jwt.verify(token, getEnvVar('JWT_SECRET'));
+  console.log('entries', entries);
   if (!entries) {
     throw createHttpError(401, 'Token is expired or invalid.');
   }
@@ -159,20 +161,17 @@ export const resetPassword = async (req, res) => {
   const user = await UsersCollection.findOne({
     email: entries.email,
   });
-
+  console.log('user', user);
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
 
   const encryptedPassword = await bcrypt.hash(newPassword, 10);
-
+  console.log('encryptedPassword', encryptedPassword);
   await UsersCollection.updateOne(
     { _id: user._id },
     { password: encryptedPassword },
   );
 
-  res.status(200).json({
-    status: 200,
-    message: 'Password successfully updated!',
-  });
+  await SessionCollection.findOneAndDelete({ userId: user._id });
 };

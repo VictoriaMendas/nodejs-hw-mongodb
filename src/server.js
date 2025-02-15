@@ -37,6 +37,7 @@ export const setupServer = () => {
   app.use('*', notFoundhandler);
 
   app.use(errorHandler);
+
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
