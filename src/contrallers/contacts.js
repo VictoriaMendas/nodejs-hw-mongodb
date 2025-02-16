@@ -8,6 +8,9 @@ import {
 } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getContactsController = async (req, res) => {
   const { _id: userId } = req.user;
@@ -45,7 +48,20 @@ export const getContactByIdController = async (req, res) => {
 };
 export const createContactController = async (req, res) => {
   const { _id: userId } = req.user;
-  const contact = await createContact(req.body, userId);
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (photo) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(photo);
+      } else {
+        photoUrl = await saveFileToUploadDir(photo);
+      }
+    }
+  }
+
+  const contact = await createContact(req.body, userId, photoUrl);
 
   res.status(201).json({
     status: 201,
@@ -57,10 +73,21 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const { _id: userId } = req.user;
-  const result = await updateContactById(req.body, userId, contactId, {
-    upsert: true,
-  });
+  const photo = req.file;
+  let photoUrl;
 
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const result = await updateContactById(contactId, userId, {
+    ...req.body,
+    photo: photoUrl,
+  });
   if (!result) {
     next(createHttpError(404, 'Contact not found'));
     return;
@@ -68,7 +95,7 @@ export const patchContactController = async (req, res, next) => {
 
   res.status(200).json({
     status: 200,
-    message: `Successfully upserted a contact!`,
+    message: `Successfully patched a contact!`,
     data: result,
   });
 };
@@ -86,3 +113,18 @@ export const deleteContactController = async (req, res, next) => {
 
   res.status(204).send();
 };
+
+/* в photo лежить обʼєкт файлу
+		{
+		  fieldname: 'photo',
+		  originalname: 'download.jpeg',
+		  encoding: '7bit',
+		  mimetype: 'image/jpeg',
+		  destination: '/Users/borysmeshkov/Projects/goit-study/students-app/temp',
+		  filename: '1710709919677_download.jpeg',
+		  path: '/Users/borysmeshkov/Projects/goit-study/students-app/temp/1710709919677_download.jpeg',
+		  size: 7
+	  }
+	*/
+
+/* Інший код контролеру */

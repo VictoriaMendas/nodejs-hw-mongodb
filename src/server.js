@@ -3,7 +3,7 @@ import cors from 'cors';
 import pino from 'pino-http';
 
 import dotenv from 'dotenv';
-
+import { UPLOAD_DIR } from './constants/index.js';
 import { getEnvVar } from './utils/getEnvVar.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundhandler } from './middlewares/notFoundHandler.js';
@@ -29,6 +29,8 @@ export const setupServer = () => {
       },
     }),
   );
+
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.get('/', (req, res) => {
     res.json({ message: 'Hello, World!' });
